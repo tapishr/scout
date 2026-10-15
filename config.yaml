@@ -199,5 +199,16 @@ sources:
     enabled: true
     count: 50      # jobGeo is the signal here
 
+
+  # Job-alert emails (Indeed, LinkedIn) read over IMAP.
+  # Both platforms forbid crawling, so scout reads the alert mail they send you
+  # instead. Set up saved searches on each, filter the alerts into one folder,
+  # and name it here. Credentials come from the environment, never this file:
+  #   SCOUT_IMAP_HOST / SCOUT_IMAP_USER / SCOUT_IMAP_PASSWORD (app password)
+  email:
+    enabled: false
+    folder: "Job Alerts"
+    max_age_days: 7
+
 output:
   max_suspicious: 40   # cap the low-priority section so the digest stays skimmable

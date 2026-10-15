@@ -13,7 +13,7 @@ from collections.abc import Callable
 from ..config import Config
 from ..http import PoliteClient
 from ..models import Job
-from . import aggregators, ashby, atlassian, greenhouse, smartrecruiters, workable
+from . import aggregators, ashby, atlassian, email_alerts, greenhouse, smartrecruiters, workable
 
 FetchFn = Callable[[PoliteClient, Config], list[Job]]
 
@@ -23,6 +23,7 @@ SOURCES: dict[str, FetchFn] = {
     "workable": workable.fetch,
     "smartrecruiters": smartrecruiters.fetch,
     "atlassian": atlassian.fetch,
+    "email": email_alerts.fetch,
     "himalayas": aggregators.fetch_himalayas,
     "remoteok": aggregators.fetch_remoteok,
     "remotive": aggregators.fetch_remotive,

@@ -20,3 +20,28 @@ Newest entries at the bottom. For the *current state of truth*, read `CONTEXT.md
 Per the process requirement. Contains purpose, the verified API facts, design
 decisions with rationale (three buckets, JSON-over-SQLite, config-driven, politeness),
 build state, and a "PICK UP HERE" section.
+
+## 2026-10-15 — email-alert source added (main session)
+
+Added `fetchers/email_alerts.py` (211 lines) reading Indeed and LinkedIn job-alert
+mail over IMAP, after confirming neither site may be crawled: Indeed's robots.txt
+has `Disallow: /jobs/IN/` under `User-agent: *` plus `Disallow: /*?rss` (and the RSS
+endpoint 403s); LinkedIn UA §8.2 forbids automated access. Reading alert mail the
+user asked for sidesteps both — first-party data, no bot detection, nothing to
+repair when a page template changes.
+
+Two real bugs found by the tests, both fixed:
+- A missing or malformed `Date:` header raised `ValueError` out of
+  `parsedate_to_datetime` and lost the entire email. Now costs the age, not the post.
+- `_text()` collapsed every whitespace run, erasing the block boundary that company
+  and location extraction depends on — alerts render them as adjacent `<div>`s.
+  Added `_blocks()`, which marks block-level ends before tags are stripped.
+
+Disabled by default in config. 107 tests passing, ruff clean.
+
+### Still open
+- The `suspicious` bucket is ~444 of 450 on a live run. All of it comes from the
+  five aggregators; every genuinely useful hit so far came from the ATS sources and
+  Atlassian's endpoint. Tune aggregator filtering before adding any new source.
+- Not pushed: this machine's SSH key is `tapishr-kpro`, which cannot create or push
+  to repos under `tapishr`. Needs a PAT with `repo` scope in `gh_token=` in ~/Code/.env.

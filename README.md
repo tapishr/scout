@@ -28,6 +28,35 @@ Real output from a first run (truncated):
 
 428 roles matched the filters across 8 source(s).
 
+
+### Job-alert email (Indeed, LinkedIn)
+
+Both platforms forbid crawling — Indeed's `robots.txt` carries `Disallow: /jobs/IN/`
+under `User-agent: *`, and LinkedIn's User Agreement §8.2 prohibits automated
+access. So scout does not touch either site. Instead it reads the **alert emails
+they send you**, from your own mailbox: first-party data, delivered on request,
+parsed locally. No scraping, no bot detection, no account risk.
+
+Set up saved searches on each platform, filter their alerts into one mail folder,
+then:
+
+```bash
+export SCOUT_IMAP_HOST=imap.gmail.com
+export SCOUT_IMAP_USER=you@example.com
+export SCOUT_IMAP_PASSWORD=...    # an app-specific password, not your account password
+```
+
+and enable it in `config.yaml`:
+
+```yaml
+  email:
+    enabled: true
+    folder: "Job Alerts"
+    max_age_days: 7
+```
+
+Credentials are read from the environment only, never from config — this repo is public.
+
 ## Remote, India — no office attached (7)
 _India remote with no Indian office on the requisition._
 
