@@ -1,0 +1,95 @@
+[
+  {
+    "id": 25283,
+    "title": "Senior Infrastructure Engineer",
+    "locations": [
+      "Remote - India - Remote",
+      "Remote - Remote"
+    ],
+    "category": "Engineering",
+    "overview": "<p>We are looking for a Senior Infrastructure Engineer who is passionate about scaling Cloud services to join our growing SRE team. The SRE team owns the infrastructure, tooling and automation that Jira and Confluence Cloud runs on, and has a deep understanding of how Atlassian products leverage clo",
+    "responsibilities": "<ul><li><p>5+ years experience operating high-availability, fault-tolerant, scalable, distributed software in production: building monitoring, tweakin",
+    "qualifications": "<h3>It would be great, but not mandatory if you had:</h3><ul><li><p>Experience in datastores (RDBMS, time-series-database, NoSql, search, analytics).<",
+    "applyUrl": "https://careers-apac-atlassian.icims.com/jobs/25283/senior-infrastructure-engineer/job?mode=apply",
+    "portalJobPost": {
+      "portalUrl": "https://careers-apac-atlassian.icims.com/jobs/25283/senior-infrastructure-engineer/job",
+      "id": 25283,
+      "updatedDate": "2026-09-09 11:03 AM"
+    }
+  },
+  {
+    "id": 27391,
+    "title": "Principal Data Platform Engineer",
+    "locations": [
+      "Remote - India - Remote",
+      "Remote - Remote",
+      "Bengaluru - India -   Bengaluru,  560071 India"
+    ],
+    "category": "Engineering",
+    "overview": "<p>Are you passionate about data platforms and tools? Are you an open-minded, structured thinker who is passionate about building systems at scale. Do you understand data platforms, know how to build them and want to help our users to make data actionable? If so, this role with our team at Atlassian",
+    "responsibilities": "<p>We build analytical data platforms for Atlassian that serve both Engineering and Data Engineering to help them generate valuable insights from data",
+    "qualifications": "<p>Required</p><ul><li><p>12+ years of software or data engineering experience, with at least 6 years building data platform infrastructure</p></li><l",
+    "applyUrl": "https://careers-apac-atlassian.icims.com/jobs/27391/principal-data-platform-engineer/job?mode=apply",
+    "portalJobPost": {
+      "portalUrl": "https://careers-apac-atlassian.icims.com/jobs/27391/principal-data-platform-engineer/job",
+      "id": 27391,
+      "updatedDate": "2026-10-01 09:51 AM"
+    }
+  },
+  {
+    "id": 26569,
+    "title": "Principal Data Engineer",
+    "locations": [
+      "Bengaluru - India -   Bengaluru,  560071 India",
+      "Remote - Remote"
+    ],
+    "category": "Analytics & Data Science",
+    "overview": "<p><strong>Working at Atlassian</strong></p><p>Atlassians can choose where they work – whether in an office, from home, or a combination of the two. That way, Atlassians have more control over supporting their family, personal goals, and other priorities. We can hire people in any country where we h",
+    "responsibilities": "<p>Atlassian is looking for a Principal Data Engineer to join our Data Engineering Team and play a tech lead &amp; architect role to build world-class",
+    "qualifications": "<p data-compensation='true'>At Atlassian, we strive to design equitable, explainable, and competitive compensation programs. We follow consistent hiri",
+    "applyUrl": "https://careers-apac-atlassian.icims.com/jobs/26569/principal-data-engineer/job?mode=apply",
+    "portalJobPost": {
+      "portalUrl": "https://careers-apac-atlassian.icims.com/jobs/26569/principal-data-engineer/job",
+      "id": 26569,
+      "updatedDate": "2026-09-28 11:13 AM"
+    }
+  },
+  {
+    "id": 27500,
+    "title": "Enterprise Account Manager - Mandarin Speaking",
+    "locations": [
+      "Sydney - Australia -   Sydney,  2000 Australia",
+      "Remote - Remote"
+    ],
+    "category": "Sales",
+    "overview": "<p>We are looking for a proactive, high-performing Enterprise Account Manager - Mandarin speaking to manage the retention and growth of our largest and most complex Enterprise customers within the Greater China Region (GCR). At Atlassian, with over 300,000 customers worldwide, our Account Management",
+    "responsibilities": "<ul><li><p><strong>Own Revenue Accountability:</strong> Drive individual sales performance, maintain a high-accuracy pipeline forecast, and balance pr",
+    "qualifications": "<p>At Atlassian, we strive to design equitable, explainable, and competitive compensation programs. We follow consistent hiring practices and account ",
+    "applyUrl": "https://careers-apac-atlassian.icims.com/jobs/27500/enterprise-account-manager---mandarin-speaking/job?mode=apply",
+    "portalJobPost": {
+      "portalUrl": "https://careers-apac-atlassian.icims.com/jobs/27500/enterprise-account-manager---mandarin-speaking/job",
+      "id": 27500,
+      "updatedDate": "2026-10-11 11:45 PM"
+    }
+  },
+  {
+    "id": 26986,
+    "title": "Enterprise Security Engineer",
+    "locations": [
+      "Sydney - Australia -   Sydney,  2000 Australia",
+      "Remote - Remote",
+      "Melbourne - Australia -   Melbourne,  3000 Australia",
+      "Brisbane - Australia -   Brisbane,   Australia"
+    ],
+    "category": "Security",
+    "overview": "<p>The Enterprise Security Engineer is a hands-on engineer who implements, operates, and improves security controls across corporate architecture, SaaS platforms, cloud services, endpoints, identity, data, and workforce technologies. This role translates enterprise security strategy into practical, ",
+    "responsibilities": "<h3>Enterprise Security Engineering</h3><ul><li><p>Design, implement, operate, and maintain security controls across identity, endpoints, network, clo",
+    "qualifications": "<h2><strong>Key Skills and Experience</strong></h2><ul><li><p>3–5+ years of experience in cybersecurity, security engineering, cloud security, systems",
+    "applyUrl": "https://careers-apac-atlassian.icims.com/jobs/26986/enterprise-security-engineer/job?mode=apply",
+    "portalJobPost": {
+      "portalUrl": "https://careers-apac-atlassian.icims.com/jobs/26986/enterprise-security-engineer/job",
+      "id": 26986,
+      "updatedDate": "2026-09-25 06:04 AM"
+    }
+  }
+]

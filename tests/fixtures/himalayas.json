@@ -1,0 +1,65 @@
+{
+  "jobs": [
+    {
+      "guid": "https://himalayas.app/companies/tsmg/jobs/quality-control-specialist-for-ai-ml-with-portuguese-brazil-language",
+      "title": "Quality control specialist for AI/ ML with Portuguese (Brazil) language",
+      "companyName": "TSMG",
+      "companySlug": "tsmg",
+      "applicationLink": "https://himalayas.app/companies/tsmg/jobs/quality-control-specialist-for-ai-ml-with-portuguese-brazil-language",
+      "locationRestrictions": [
+        "Brazil"
+      ],
+      "minSalary": null,
+      "maxSalary": null,
+      "currency": null,
+      "pubDate": 1791973667,
+      "excerpt": "About the ProjectTSMG is looking for Quality control specialists to support an AI language project focused on improving speech recognition systems."
+    },
+    {
+      "guid": "https://himalayas.app/companies/general-dynamics-information-technology/jobs/senior-devsecops-engineer",
+      "title": "Senior DevSecOps Engineer",
+      "companyName": "General Dynamics Information Technology",
+      "companySlug": "general-dynamics-information-technology",
+      "applicationLink": "https://himalayas.app/companies/general-dynamics-information-technology/jobs/senior-devsecops-engineer",
+      "locationRestrictions": [
+        "United States"
+      ],
+      "minSalary": 114750,
+      "maxSalary": 155250,
+      "currency": "USD",
+      "pubDate": 1791973667,
+      "excerpt": "Type of Requisition:RegularClearance Level Must Currently Possess: NoneClearance Level Must Be Able to Obtain: NonePublic Trust/Other Required:NoneJob"
+    },
+    {
+      "guid": "https://himalayas.app/companies/pearson/jobs/associate-scoring-service",
+      "title": "Associate, Scoring Service",
+      "companyName": "Pearson",
+      "companySlug": "pearson",
+      "applicationLink": "https://himalayas.app/companies/pearson/jobs/associate-scoring-service",
+      "locationRestrictions": [
+        "United States"
+      ],
+      "minSalary": null,
+      "maxSalary": null,
+      "currency": "USD",
+      "pubDate": 1791973665,
+      "excerpt": "We are the world’s learning company with more than 24,000 employees operating in 70 countries."
+    },
+    {
+      "guid": "https://himalayas.app/companies/rws-group/jobs/search-engine-evaluator-polish-poland",
+      "title": "Search Engine Evaluator - Polish (Poland)",
+      "companyName": "RWS Group",
+      "companySlug": "rws-group",
+      "applicationLink": "https://himalayas.app/companies/rws-group/jobs/search-engine-evaluator-polish-poland",
+      "locationRestrictions": [
+        "Poland"
+      ],
+      "minSalary": 11,
+      "maxSalary": 11,
+      "currency": "USD",
+      "pubDate": 1791973663,
+      "excerpt": "Overview:Are you a web-savvy, search expert with a talent for finding things online by using just a few words?"
+    }
+  ],
+  "nextCursor": null
+}

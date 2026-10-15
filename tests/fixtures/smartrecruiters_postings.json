@@ -1,0 +1,27 @@
+{
+  "offset": 0,
+  "limit": 100,
+  "totalFound": 2,
+  "content": [
+    {
+      "id": "sr-1",
+      "name": "Principal Site Reliability Engineer",
+      "company": {"identifier": "ExampleCo", "name": "Example Co"},
+      "location": {"city": "Bengaluru", "region": "Karnataka", "country": "India", "remote": true},
+      "department": {"label": "Engineering"},
+      "releasedDate": "2026-10-05T09:00:00.000Z",
+      "ref": "https://api.smartrecruiters.com/v1/companies/ExampleCo/postings/sr-1",
+      "applyUrl": "https://jobs.smartrecruiters.com/ExampleCo/sr-1"
+    },
+    {
+      "id": "sr-2",
+      "name": "Senior Data Engineer",
+      "company": {"identifier": "ExampleCo", "name": "Example Co"},
+      "location": {"city": "Berlin", "country": "Germany", "remote": false},
+      "department": {"label": "Data"},
+      "releasedDate": "2026-10-08T09:00:00.000Z",
+      "ref": "https://api.smartrecruiters.com/v1/companies/ExampleCo/postings/sr-2",
+      "applyUrl": "https://jobs.smartrecruiters.com/ExampleCo/sr-2"
+    }
+  ]
+}

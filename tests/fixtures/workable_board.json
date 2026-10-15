@@ -1,0 +1,49 @@
+{
+  "name": "Example Co",
+  "description": "A company that uses Workable.",
+  "jobs": [
+    {
+      "id": 1001,
+      "shortcode": "ABC123",
+      "title": "Senior Platform Engineer",
+      "department": "Engineering",
+      "country": "India",
+      "countryCode": "IN",
+      "city": "Remote",
+      "locations": [{"city": "Remote", "region": "Maharashtra", "country": "India"}],
+      "telecommuting": true,
+      "url": "https://apply.workable.com/example/j/ABC123/",
+      "application_url": "https://apply.workable.com/example/j/ABC123/apply/",
+      "published_on": "2026-10-01",
+      "description": "<p>We are hiring a Senior Platform Engineer to own our deployment platform.</p>"
+    },
+    {
+      "id": 1002,
+      "shortcode": "POOL99",
+      "title": "Senior Backend Engineer",
+      "department": "Talent Pool",
+      "country": "India",
+      "countryCode": "IN",
+      "locations": [{"city": "Remote", "country": "India"}],
+      "telecommuting": true,
+      "url": "https://apply.workable.com/example/j/POOL99/",
+      "application_url": "https://apply.workable.com/example/j/POOL99/apply/",
+      "published_on": "2026-09-15",
+      "description": "<p>This posting is for active pooling purposes only and does not guarantee employment. We review profiles for future opportunities.</p>"
+    },
+    {
+      "id": 1003,
+      "shortcode": "US777",
+      "title": "Staff Infrastructure Engineer",
+      "department": "Engineering",
+      "country": "United States",
+      "countryCode": "US",
+      "locations": [{"city": "Austin", "region": "Texas", "country": "United States"}],
+      "telecommuting": true,
+      "url": "https://apply.workable.com/example/j/US777/",
+      "application_url": "https://apply.workable.com/example/j/US777/apply/",
+      "published_on": "2026-10-10",
+      "description": "<p>Remote within the United States only.</p>"
+    }
+  ]
+}

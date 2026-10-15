@@ -1,0 +1,93 @@
+{
+  "jobs": [
+    {
+      "id": "6c74387f-2330-4005-b711-f622925bc1f2",
+      "title": "Partner Sales Director-India/ASEAN",
+      "location": "India",
+      "secondaryLocations": [
+        {
+          "location": "Singapore"
+        }
+      ],
+      "isRemote": true,
+      "isListed": true,
+      "compensation": {
+        "compensationTierSummary": null
+      },
+      "publishedAt": "2026-10-06T03:22:13.712+00:00",
+      "jobUrl": "https://jobs.ashbyhq.com/clickhouse/6c74387f-2330-4005-b711-f622925bc1f2",
+      "applyUrl": "https://jobs.ashbyhq.com/clickhouse/6c74387f-2330-4005-b711-f622925bc1f2/application",
+      "department": "Go-To-Market",
+      "team": "Go-To-Market",
+      "descriptionPlain": "About the Role\n\nWe’re looking for a Partner Sales Director for the Indian and ASEAN market. This is a high-energy, relationship-driven professional who can accelerate revenue by driving partner-source"
+    },
+    {
+      "id": "c3a55a5b-479c-409c-b5c5-8e0eec6b25f2",
+      "title": "Senior Consulting Engineer - India",
+      "location": "India",
+      "secondaryLocations": [],
+      "isRemote": true,
+      "isListed": true,
+      "compensation": {
+        "compensationTierSummary": null
+      },
+      "publishedAt": "2026-04-09T16:51:52.334+00:00",
+      "jobUrl": "https://jobs.ashbyhq.com/clickhouse/c3a55a5b-479c-409c-b5c5-8e0eec6b25f2",
+      "applyUrl": "https://jobs.ashbyhq.com/clickhouse/c3a55a5b-479c-409c-b5c5-8e0eec6b25f2/application",
+      "department": "Support Services",
+      "team": "Consulting Engineers",
+      "descriptionPlain": "We are currently expanding our Support Services team at ClickHouse, which delivers exceptional service to our customers worldwide. We are seeking a Senior Consulting Engineer to join our global team, "
+    },
+    {
+      "id": "db498a8c-c8d8-405b-b86a-0943a5122e7d",
+      "title": "Senior Cloud Software Engineer - Efficiency Engineering",
+      "location": "AMER",
+      "secondaryLocations": [],
+      "isRemote": null,
+      "isListed": true,
+      "compensation": {
+        "compensationTierSummary": null
+      },
+      "publishedAt": "2026-08-13T06:40:24.278+00:00",
+      "jobUrl": "https://jobs.ashbyhq.com/clickhouse/db498a8c-c8d8-405b-b86a-0943a5122e7d",
+      "applyUrl": "https://jobs.ashbyhq.com/clickhouse/db498a8c-c8d8-405b-b86a-0943a5122e7d/application",
+      "department": "Engineering",
+      "team": "Cloud Engineering",
+      "descriptionPlain": "About the Team\n\nThe Cloud Infrastructure Engineering team builds and manages the foundational blocks of ClickHouse Cloud data plane end-to-end. This includes compute, networking, security, and a multi"
+    },
+    {
+      "id": "24aecf2b-0948-4fd0-94d2-1cb9875a59cd",
+      "title": "Senior Cloud Software Engineer - Efficiency Engineering",
+      "location": "AMER",
+      "secondaryLocations": [],
+      "isRemote": null,
+      "isListed": true,
+      "compensation": {
+        "compensationTierSummary": null
+      },
+      "publishedAt": "2026-08-13T06:41:24.474+00:00",
+      "jobUrl": "https://jobs.ashbyhq.com/clickhouse/24aecf2b-0948-4fd0-94d2-1cb9875a59cd",
+      "applyUrl": "https://jobs.ashbyhq.com/clickhouse/24aecf2b-0948-4fd0-94d2-1cb9875a59cd/application",
+      "department": "Engineering",
+      "team": "Cloud Engineering",
+      "descriptionPlain": "About the Team\n\nThe Cloud Infrastructure Engineering team builds and manages the foundational blocks of ClickHouse Cloud data plane end-to-end. This includes compute, networking, security, and a multi"
+    },
+    {
+      "id": "863956bc-9a2e-4531-ba9e-45c409e4f1ca",
+      "title": "Senior Software Engineer - Integrations - AI/ML ",
+      "location": "United States",
+      "secondaryLocations": [],
+      "isRemote": true,
+      "isListed": true,
+      "compensation": {
+        "compensationTierSummary": "$147K – $238K • Offers Equity • Multiple Ranges"
+      },
+      "publishedAt": "2026-07-09T12:23:47.348+00:00",
+      "jobUrl": "https://jobs.ashbyhq.com/clickhouse/863956bc-9a2e-4531-ba9e-45c409e4f1ca",
+      "applyUrl": "https://jobs.ashbyhq.com/clickhouse/863956bc-9a2e-4531-ba9e-45c409e4f1ca/application",
+      "department": "Engineering",
+      "team": "Engineering",
+      "descriptionPlain": "The Connectors team is the bridge between ClickHouse and the broader ecosystem. We build and maintain the integrations that make ClickHouse accessible to millions of developers, data practitioners, an"
+    }
+  ]
+}

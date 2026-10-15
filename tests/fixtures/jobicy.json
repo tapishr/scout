@@ -1,0 +1,64 @@
+{
+  "jobs": [
+    {
+      "id": 155295,
+      "jobTitle": "Enterprise Account Executive, Acquisition | Remote | Italy",
+      "companyName": "Grafana Labs",
+      "jobGeo": "Italy",
+      "url": "https://jobicy.com/jobs/155295-enterprise-account-executive-acquisition-remote-italy",
+      "pubDate": "2026-10-14T13:18:10+00:00",
+      "salaryMin": 170000,
+      "salaryMax": 211250,
+      "salaryCurrency": "EUR",
+      "jobIndustry": [
+        "Sales"
+      ],
+      "jobExcerpt": "Grafana Labs is the company behind Grafana Cloud, the fully managed observability platform trusted by more than 10,000 organizations to ensure reliabi"
+    },
+    {
+      "id": 155292,
+      "jobTitle": "Enterprise Account Executive, Acquisition - META | Remote | Spain",
+      "companyName": "Grafana Labs",
+      "jobGeo": "Spain",
+      "url": "https://jobicy.com/jobs/155292-enterprise-account-executive-acquisition-meta-remote-spain",
+      "pubDate": "2026-10-14T13:18:05+00:00",
+      "salaryMin": 170000,
+      "salaryMax": 211250,
+      "salaryCurrency": "EUR",
+      "jobIndustry": [
+        "Sales"
+      ],
+      "jobExcerpt": "Grafana Labs is the company behind Grafana Cloud, the fully managed observability platform trusted by more than 10,000 organizations to ensure reliabi"
+    },
+    {
+      "id": 155293,
+      "jobTitle": "Sr. Director, Renewals Operations",
+      "companyName": "Skillsoft",
+      "jobGeo": "USA",
+      "url": "https://jobicy.com/jobs/155293-sr-director-renewals-operations",
+      "pubDate": "2026-10-14T13:18:03+00:00",
+      "salaryMin": 215000,
+      "salaryMax": 235000,
+      "salaryCurrency": "USD",
+      "jobIndustry": [
+        "Product & Operations"
+      ],
+      "jobExcerpt": "At Skillsoft, we believe skills fuel growth. Our mission is to empower every organization and every learner to turn constant change into continuous gr"
+    },
+    {
+      "id": 155294,
+      "jobTitle": "Canada Sales - Talent Community",
+      "companyName": "PointClickCare",
+      "jobGeo": "Canada",
+      "url": "https://jobicy.com/jobs/155294-canada-sales-talent-community",
+      "pubDate": "2026-10-14T13:18:02+00:00",
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "jobIndustry": [
+        "Sales"
+      ],
+      "jobExcerpt": "At PointClickCare our mission is simple: to help providers deliver exceptional care. And that starts with our people. As a leading health tech company"
+    }
+  ]
+}

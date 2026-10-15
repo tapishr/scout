@@ -1,0 +1,203 @@
+# scout configuration
+#
+# Everything tunable lives here, not in code. The operator will tune keywords far
+# more often than he will change code, and a config edit needs no test run.
+#
+# Slugs are VERIFIED-ONLY. A bad slug 404s silently, so never add one without
+# confirming it returns 200. Known-bad (do not re-add): credo-ai, baz, qodo,
+# coderabbitai, postman, credoai.
+
+http:
+  timeout_seconds: 20        # every call gets a timeout, no exceptions
+  delay_seconds: 1.0         # polite pause between calls to the same source
+  max_retries: 2             # only on timeout/5xx, never on 4xx
+  backoff_seconds: 2.0
+  user_agent: "scout-job-discovery/0.1 (+https://github.com/tapishr/scout)"
+
+# ---------------------------------------------------------------------------
+# What counts as a role worth seeing.
+# These are MATCH filters, not reject filters: a posting that fails them lands in
+# the `excluded` bucket and is still inspectable via --show-excluded.
+# ---------------------------------------------------------------------------
+matching:
+  seniority_keywords:
+    - senior
+    - staff
+    - principal
+    - lead
+    - head
+    - architect
+    - distinguished
+    - director of engineering
+  # A title matching these is engineering work.
+  role_keywords:
+    - engineer
+    - engineering
+    - architect
+    - sre
+    - site reliability
+    - infrastructure
+    - platform
+    - developer
+    - devops
+    - backend
+    - back-end
+    - distributed systems
+  # Titles matching these are never interesting even if they match above.
+  # (e.g. "Senior Sales Engineer", "Principal Recruiter")
+  # A trailing `*` matches a stem: `recruit*` also catches recruiter/recruiting.
+  # Without the star, matching is whole-word, so `lead` never eats "leader".
+  title_exclusions:
+    - sales
+    - account executive
+    - recruit*
+    - customer success
+    - marketing
+    - support engineer
+    - solutions engineer
+    - technical account manager
+    - partner*
+    - intern
+    - internship
+
+# ---------------------------------------------------------------------------
+# India-eligibility vocabulary. This drives the three-bucket classification,
+# which is the whole point of the tool. See CONTEXT.md §5.1.
+# ---------------------------------------------------------------------------
+geography:
+  # Any of these in a location string means "India is in play".
+  india_terms:
+    - india
+    - ind
+  # Indian office cities. Presence of one alongside India-remote means the
+  # employer has a lever to pull you onsite -> remote-india-or-office.
+  india_office_cities:
+    - bengaluru
+    - bangalore
+    - hyderabad
+    - pune
+    - mumbai
+    - gurgaon
+    - gurugram
+    - noida
+    - chennai
+    - delhi
+    - kolkata
+    - ahmedabad
+    - jaipur
+  # Demoted in digest ordering per operator preference. NEVER a reason to drop.
+  deprioritised_cities:
+    - bengaluru
+    - bangalore
+  remote_terms:
+    - remote
+    - anywhere
+    - distributed
+    - work from home
+    - telecommute
+  # Regions that, when they are the ONLY qualifier on a remote role, mean the
+  # role is almost certainly not open to India -> suspicious.
+  excluding_regions:
+    - united states
+    - usa
+    - u.s.
+    - us only
+    - us-only
+    - canada
+    - emea
+    - europe
+    - united kingdom
+    - uk
+    - amer
+    - americas
+    - north america
+    - latin america
+    - latam
+    # "apac" is deliberately absent: APAC includes India, so it is not excluding.
+    - apac-anz
+    - australia
+    - singapore
+    - germany
+    - france
+    - ireland
+    - israel
+    - brazil
+    - poland
+    - spain
+    - netherlands
+
+# Workable postings are sometimes talent pools, not real reqs. Flag, never drop.
+talent_pool_markers:
+  - "active pooling purposes only"
+  - "does not guarantee employment"
+  - "talent pool"
+  - "talent community"
+  - "future opportunities"
+  - "expression of interest"
+  - "general application"
+
+# ---------------------------------------------------------------------------
+# Sources. Disable one by setting enabled: false.
+# ---------------------------------------------------------------------------
+sources:
+  ashby:
+    enabled: true
+    # Ashby's list endpoint includes descriptionPlain, so JD text is free here.
+    # Re-verified 2026-10-15: perplexity-ai -> perplexity, fireworksai -> fireworks.
+    # Dropped (404, no working alternative found): together-ai, sourcegraph,
+    # mistral, replicate. A run reports any slug that 404s, so this stays honest.
+    orgs: [clickhouse, temporal, harvey, vanta, deel, posthog, linear,
+           elevenlabs, baseten, cohere, modal, supabase, neon,
+           ramp, sierra, perplexity, fireworks, browserbase]
+
+  greenhouse:
+    enabled: true
+    # Re-verified 2026-10-15. Dropped (404, no working alternative found):
+    # huggingface, dbtlabs, airbyte, confluent, hashicorp, docker, zapier,
+    # coderabbit. Corrected: automattic -> automatticcareers.
+    orgs: [gitlab, elastic, mongodb, grafanalabs, cockroachlabs, canonical,
+           automatticcareers, chainguard]
+    # The list endpoint has NO description. Fetching it is N+1 requests against a
+    # free API, so it is off by default. Turn on only for orgs whose postings
+    # cannot be classified from title+location alone.
+    fetch_details: false
+    detail_orgs: []
+
+  workable:
+    # Responded 200 but returned ZERO jobs for every org tried on 2026-10-15.
+    # Parser is implemented and fixture-tested; re-enable with known-good slugs.
+    enabled: false
+    orgs: []
+
+  smartrecruiters:
+    # Same as workable: 200 with totalFound=0 for every company tried.
+    enabled: false
+    orgs: []
+
+  atlassian:
+    # Bespoke endpoint, no org list. Highest-signal source: its location strings
+    # distinguish "Remote - India - Remote" from a Bengaluru office explicitly.
+    enabled: true
+
+  # Aggregators: used to DISCOVER companies not on the curated lists above.
+  himalayas:
+    enabled: true
+    # The endpoint caps a page at 20 however large `limit` is, so volume comes
+    # from following nextCursor. Worth the calls: locationRestrictions is the
+    # best India signal in the tool.
+    pages: 10
+  remoteok:
+    enabled: true  # first array element is metadata and is skipped by the parser
+  remotive:
+    enabled: true
+    # Returned only 15 rows for any limit on 2026-10-15 (their `job-count` agrees),
+    # so treat it as a thin supplementary source, not a primary one.
+    limit: 100     # candidate_required_location is a strong signal
+  workingnomads:
+    enabled: true
+  jobicy:
+    enabled: true
+    count: 50      # jobGeo is the signal here
+
+output:
+  max_suspicious: 40   # cap the low-priority section so the digest stays skimmable
