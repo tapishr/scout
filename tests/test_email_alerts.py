@@ -1,7 +1,13 @@
 """Parsing of job-alert email.
 
-The fetcher's IMAP half is a thin shell around :func:`parse_message`; all the
-logic worth testing is the parsing, so these tests never open a connection.
+Fixtures mirror the link shapes the real providers actually send, which are not
+the obvious ones: Indeed wraps every job in a ``cts.indeed.com`` tracker whose
+path is url-safe base64 of gzipped JSON, and LinkedIn alert links carry a
+``/comm`` prefix. Both were discovered by reading real mail; parsing was written
+against assumptions first and found nothing.
+
+The IMAP half is a thin shell around :func:`parse_message`, so these tests never
+open a connection.
 """
 
 from __future__ import annotations
@@ -12,8 +18,8 @@ import pytest
 
 from scout.fetchers.email_alerts import (
     EmailConfigError,
+    _decode_indeed_tracker,
     _indeed_job_id,
-    _split_company_location,
     fetch,
     parse_message,
 )
@@ -25,72 +31,85 @@ def _load(name: str) -> bytes:
     return (FIXTURES / name).read_bytes()
 
 
-def test_indeed_alert_yields_one_job_per_posting() -> None:
-    jobs = parse_message(_load("indeed_alert.eml"))
-    assert [j.org for j in jobs] == ["indeed", "indeed"]
-    assert [j.title for j in jobs] == ["Senior Backend Engineer", "Staff Platform Engineer"]
+class TestIndeed:
+    def test_job_is_recovered_from_the_click_tracker(self) -> None:
+        """The id exists only inside the gzipped tracker payload."""
+        jobs = parse_message(_load("indeed_alert.eml"))
+        assert [j.external_id for j in jobs] == ["a1b2c3d4e5f60001"]
+
+    def test_title_and_company_come_from_the_subject(self) -> None:
+        """Indeed's only anchor text is a 'View job' button, so the subject wins."""
+        job = parse_message(_load("indeed_alert.eml"))[0]
+        assert job.title == "Senior Backend Engineer"
+        assert job.company == "Arcturus Labs"
+
+    def test_repeated_links_collapse_to_one_job(self) -> None:
+        assert len(parse_message(_load("indeed_alert.eml"))) == 1
+
+    def test_undecodable_tracker_is_skipped_not_fatal(self) -> None:
+        """Unsubscribe links share the tracker shape and must not break a run."""
+        assert _decode_indeed_tracker("not-a-valid-gzip-token") == ""
+        assert len(parse_message(_load("indeed_alert.eml"))) == 1
+
+    def test_url_is_canonicalised(self) -> None:
+        job = parse_message(_load("indeed_alert.eml"))[0]
+        assert job.url == "https://www.indeed.com/viewjob?jk=a1b2c3d4e5f60001"
+        assert "cts.indeed.com" in job.apply_url, "the tracked link is kept for applying"
 
 
-def test_duplicate_links_in_one_email_are_collapsed() -> None:
-    """Indeed repeats a posting across layout blocks; the id must dedupe it."""
-    jobs = parse_message(_load("indeed_alert.eml"))
-    assert len({j.external_id for j in jobs}) == len(jobs)
+class TestLinkedIn:
+    def test_comm_prefixed_links_are_matched(self) -> None:
+        jobs = parse_message(_load("linkedin_alert.eml"))
+        assert {j.external_id for j in jobs} == {"4123456789", "4987654321"}
+
+    def test_title_is_the_longest_anchor_not_the_button(self) -> None:
+        """Each job is linked by a logo, the title, and a 'View job' button."""
+        job = next(j for j in parse_message(_load("linkedin_alert.eml"))
+                   if j.external_id == "4123456789")
+        assert job.title.startswith("Principal Infrastructure Engineer")
+        assert "View job" not in job.title
+
+    def test_location_is_split_off_the_middot(self) -> None:
+        job = next(j for j in parse_message(_load("linkedin_alert.eml"))
+                   if j.external_id == "4123456789")
+        assert job.locations == ["India (Remote)"]
+
+    def test_location_feeds_the_india_filter(self) -> None:
+        """The whole point of recovering location from the anchor text."""
+        job = next(j for j in parse_message(_load("linkedin_alert.eml"))
+                   if j.external_id == "4987654321")
+        assert "pune" in job.location_blob
 
 
-def test_indeed_url_is_canonicalised_not_the_tracking_link() -> None:
-    job = parse_message(_load("indeed_alert.eml"))[0]
-    assert job.url == "https://www.indeed.com/viewjob?jk=a1b2c3d4e5f60001"
-    assert "rc/clk" in job.apply_url, "the original tracked link is still kept for applying"
+class TestGeneral:
+    def test_posted_at_comes_from_the_message_date(self) -> None:
+        job = parse_message(_load("linkedin_alert.eml"))[0]
+        assert job.posted_at is not None and job.posted_at.year == 2026
 
+    def test_malformed_date_costs_the_age_not_the_posting(self) -> None:
+        raw = (b"From: a@b.c\nSubject: Staff Engineer @ Globex\n"
+               b"Content-Type: text/html\n\n"
+               b'<a href="https://www.linkedin.com/comm/jobs/view/999/">Staff Engineer</a>')
+        jobs = parse_message(raw)
+        assert len(jobs) == 1 and jobs[0].posted_at is None
 
-def test_company_and_location_are_recovered() -> None:
-    job = parse_message(_load("indeed_alert.eml"))[0]
-    assert job.company == "Arcturus Labs"
-    assert any("india" in loc.lower() for loc in job.locations)
+    def test_untitled_links_are_dropped(self) -> None:
+        raw = (b"From: a@b.c\nSubject: x\nContent-Type: text/html\n\n"
+               b'<a href="https://www.linkedin.com/comm/jobs/view/999/"></a>')
+        assert parse_message(raw) == []
 
+    def test_keys_are_distinct_across_providers(self) -> None:
+        keys = {j.key for j in parse_message(_load("indeed_alert.eml"))}
+        keys |= {j.key for j in parse_message(_load("linkedin_alert.eml"))}
+        assert len(keys) == 3 and all(k.startswith("email:") for k in keys)
 
-def test_linkedin_alert_parses_and_canonicalises() -> None:
-    jobs = parse_message(_load("linkedin_alert.eml"))
-    assert len(jobs) == 2
-    assert jobs[0].org == "linkedin"
-    assert jobs[0].external_id == "4123456789"
-    assert jobs[0].url == "https://www.linkedin.com/jobs/view/4123456789/"
-    assert jobs[0].title == "Principal Infrastructure Engineer"
+    def test_indeed_job_id_extraction(self) -> None:
+        assert _indeed_job_id("https://x.indeed.com/viewjob?jk=abc123&y=1") == "abc123"
+        assert _indeed_job_id("https://x.indeed.com/viewjob?nope=1") == ""
 
-
-def test_posted_at_comes_from_the_message_date() -> None:
-    job = parse_message(_load("linkedin_alert.eml"))[0]
-    assert job.posted_at is not None
-    assert job.posted_at.year == 2026 and job.posted_at.month == 10
-
-
-def test_job_keys_are_stable_and_distinct_across_providers() -> None:
-    keys = {j.key for j in parse_message(_load("indeed_alert.eml"))}
-    keys |= {j.key for j in parse_message(_load("linkedin_alert.eml"))}
-    assert len(keys) == 4
-    assert all(k.startswith("email:") for k in keys)
-
-
-def test_untitled_links_are_dropped() -> None:
-    """A link we cannot read a title from is noise, not a posting."""
-    raw = b"""From: a@b.c\nSubject: x\nContent-Type: text/html\n\n
-    <a href="https://www.indeed.com/rc/clk?jk=deadbeefdeadbeef"></a>"""
-    assert parse_message(raw) == []
-
-
-def test_missing_geography_is_left_empty_rather_than_guessed() -> None:
-    company, locations = _split_company_location("Globex   Full-time   Posted 3 days ago")
-    assert company == "Globex"
-    assert locations == []
-
-
-def test_indeed_job_id_extraction() -> None:
-    assert _indeed_job_id("https://x.indeed.com/viewjob?jk=abc123&y=1") == "abc123"
-    assert _indeed_job_id("https://x.indeed.com/viewjob?nope=1") == ""
-
-
-def test_fetch_without_credentials_raises_a_clear_error(monkeypatch, config) -> None:
-    for var in ("SCOUT_IMAP_HOST", "SCOUT_IMAP_USER", "SCOUT_IMAP_PASSWORD"):
-        monkeypatch.delenv(var, raising=False)
-    with pytest.raises(EmailConfigError, match="SCOUT_IMAP_HOST"):
-        fetch(None, config)
+    def test_fetch_without_credentials_raises_a_clear_error(self, monkeypatch, config) -> None:
+        for var in ("SCOUT_IMAP_HOST", "SCOUT_IMAP_USER", "SCOUT_IMAP_PASSWORD"):
+            monkeypatch.delenv(var, raising=False)
+        monkeypatch.setattr("scout.fetchers.email_alerts.secret", lambda n, d=None: d)
+        with pytest.raises(EmailConfigError, match="SCOUT_IMAP_HOST"):
+            fetch(None, config)

@@ -28,8 +28,11 @@ of ``keychain:<service>`` is resolved through the macOS keychain instead:
 
 from __future__ import annotations
 
+import base64
 import email
+import gzip
 import imaplib
+import json
 import re
 from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
@@ -46,7 +49,14 @@ from ..secrets import get as secret
 INDEED_LINK = re.compile(
     r"https?://[\w.-]*indeed\.[\w.]+/(?:rc/clk|viewjob|pagead/clk)[^\s\"'<>]*", re.I
 )
-LINKEDIN_LINK = re.compile(r"https?://[\w.-]*linkedin\.com/jobs/view/(\d+)[^\s\"'<>]*", re.I)
+#: Indeed wraps every job link in a click tracker whose path segment is
+#: url-safe base64 of gzipped JSON holding the real URL. The job id is only
+#: reachable by decoding it — there is no jk= parameter on the outer link.
+INDEED_TRACKER = re.compile(r"https?://cts\.indeed\.com/v3/([A-Za-z0-9_\-]+)", re.I)
+#: LinkedIn alert links carry a /comm prefix; direct /jobs/view also occurs.
+LINKEDIN_LINK = re.compile(
+    r"https?://[\w.-]*linkedin\.com/(?:comm/)?jobs/view/(\d+)[^\s\"'<>]*", re.I
+)
 
 _TAG = re.compile(r"<[^>]+>")
 _WS = re.compile(r"\s+")
@@ -87,6 +97,26 @@ def _indeed_job_id(url: str) -> str:
     return (parse_qs(urlparse(url).query).get("jk") or [""])[0]
 
 
+def _decode_indeed_tracker(token: str) -> str:
+    """Recover the destination URL from a cts.indeed.com path segment.
+
+    The segment is url-safe base64 (padding stripped) of gzipped JSON shaped
+    ``{"u": "<real url>", ...}``. Anything that fails to decode is not a job
+    link — unsubscribe and not-interested links share the same wrapper — so the
+    caller simply skips it.
+    """
+    try:
+        padded = token + "=" * (-len(token) % 4)
+        raw = gzip.decompress(base64.urlsafe_b64decode(padded)).decode("utf-8", "replace")
+    except Exception:  # noqa: BLE001 — a non-decodable token is just not a job link
+        return ""
+    try:
+        return str(json.loads(raw).get("u") or "")
+    except (ValueError, AttributeError):
+        match = re.search(r'"u"\s*:\s*"([^"]+)"', raw)
+        return match.group(1) if match else ""
+
+
 def _html_parts(message: Message) -> Iterable[str]:
     """Yield decoded ``text/html`` bodies, falling back to ``text/plain``."""
     for wanted in ("text/html", "text/plain"):
@@ -104,43 +134,38 @@ def _html_parts(message: Message) -> Iterable[str]:
             return
 
 
-def _anchor_context(html: str, link: str) -> tuple[str, str]:
-    """Return (anchor text, following text) around a link.
+ANCHOR = re.compile(r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', re.I | re.S)
+#: Trailing call-to-action words that are button labels, not part of a title.
+_CTA = re.compile(r"\s*(view job|view|apply now|apply|see job)\s*$", re.I)
+#: "Senior AI Engineer @ JoVE" — Indeed puts title and company in the subject.
+SUBJECT_SPLIT = re.compile(r"^(?P<title>.+?)\s+(?:@|at)\s+(?P<company>.+)$", re.I)
 
-    Both providers put the job title inside the anchor and the company and
-    location in the markup immediately after it. This reads that window rather
-    than modelling either template, so a layout change degrades the extras
-    instead of losing the posting.
+
+def _anchor_titles(body: str) -> dict[str, str]:
+    """Map each job URL to the best title text linking to it.
+
+    Alert emails link the same posting several times — a logo with no text, the
+    title, and a "View job" button. Taking the longest anchor text per target
+    picks the title and discards the rest, without modelling either provider's
+    table layout (which is deeply nested and changes often).
     """
-    idx = html.find(link)
-    if idx < 0:
-        return "", ""
-    open_tag = html.rfind("<a", max(0, idx - 400), idx)
-    close = html.find("</a>", idx)
-    anchor = _text(html[html.find(">", idx) + 1 : close]) if close > 0 else ""
-    if open_tag >= 0 and close > 0:
-        anchor = _text(html[html.find(">", open_tag) + 1 : close])
-    trailing = _SEP.join(_blocks(html[close + 4 : close + 600])) if close > 0 else ""
-    return anchor, trailing
+    best: dict[str, str] = {}
+    for match in ANCHOR.finditer(body):
+        href, inner = match.group(1), _text(match.group(2))
+        inner = _CTA.sub("", inner).strip()
+        if not inner:
+            continue
+        if len(inner) > len(best.get(href, "")):
+            best[href] = inner
+    return best
 
 
-def _split_company_location(trailing: str) -> tuple[str, list[str]]:
-    """Best-effort company and location from the text following an anchor.
-
-    Alerts render these as separate blocks, which flatten to a run of short
-    phrases. The first is the company; a later one naming a place is the
-    location. Anything unrecognised is left empty rather than guessed at —
-    the classifier treats absent geography as ``SUSPICIOUS``, which is the
-    correct outcome for a posting we could not read properly.
-    """
-    raw = trailing.split(_SEP) if _SEP in trailing else re.split(r"\s{2,}|\s[·|]\s", trailing)
-    chunks = [c.strip(" -·|,") for c in raw if c.strip(" -·|,")]
-    chunks = [c for c in chunks if 1 < len(c) < 80][:6]
-    if not chunks:
-        return "", []
-    company = chunks[0]
-    locations = [c for c in chunks[1:] if _GEO_HINT.search(c)]
-    return company, locations
+def _title_for(url: str, titles: dict[str, str]) -> str:
+    """Longest anchor text whose href contains this url (or vice versa)."""
+    if url in titles:
+        return titles[url]
+    candidates = [t for href, t in titles.items() if url in href or href in url]
+    return max(candidates, key=len) if candidates else ""
 
 
 def parse_message(raw: bytes, received: datetime | None = None) -> list[Job]:
@@ -156,17 +181,32 @@ def parse_message(raw: bytes, received: datetime | None = None) -> list[Job]:
     if stamp is not None and stamp.tzinfo is None:
         stamp = stamp.replace(tzinfo=timezone.utc)
 
+    subject = _text(str(message.get("Subject") or ""))
+    subject_match = SUBJECT_SPLIT.match(subject)
+    subj_title = subject_match.group("title").strip() if subject_match else ""
+    subj_company = subject_match.group("company").strip() if subject_match else ""
+
     jobs: list[Job] = []
     seen: set[str] = set()
 
     for body in _html_parts(message):
-        for url in INDEED_LINK.findall(body):
-            job_id = _indeed_job_id(url)
+        titles = _anchor_titles(body)
+        indeed_links: list[tuple[str, str]] = [
+            (u, _indeed_job_id(u)) for u in INDEED_LINK.findall(body)
+        ]
+        for match in INDEED_TRACKER.finditer(body):
+            destination = _decode_indeed_tracker(match.group(1))
+            if destination:
+                indeed_links.append((match.group(0), _indeed_job_id(destination)))
+        for url, job_id in indeed_links:
             if not job_id or job_id in seen:
                 continue
             seen.add(job_id)
-            title, trailing = _anchor_context(body, url)
-            company, locations = _split_company_location(trailing)
+            # Indeed alerts are one job per mail and the subject is the title;
+            # the only anchor text is a "View job" button, so prefer the subject.
+            title = subj_title or _title_for(url, titles)
+            company = subj_company
+            locations: list[str] = []
             jobs.append(
                 Job(
                     source="email",
@@ -185,8 +225,14 @@ def parse_message(raw: bytes, received: datetime | None = None) -> list[Job]:
             if job_id in seen:
                 continue
             seen.add(job_id)
-            title, trailing = _anchor_context(body, url)
-            company, locations = _split_company_location(trailing)
+            # LinkedIn anchor text is "<title><company> · <location>". The
+            # title/company boundary has no separator and is not recoverable,
+            # but the location is — and location is what the India filter needs.
+            anchor = _title_for(url, titles)
+            title, _, tail = anchor.partition("·")
+            title = title.strip() or anchor
+            company = ""
+            locations = [tail.strip()] if tail.strip() else []
             jobs.append(
                 Job(
                     source="email",

@@ -207,7 +207,7 @@ sources:
   #   SCOUT_IMAP_HOST / SCOUT_IMAP_USER / SCOUT_IMAP_PASSWORD (app password)
   email:
     enabled: true
-    folder: "Job Alerts"
+    folder: "INBOX"
     max_age_days: 7
 
 output:

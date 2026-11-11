@@ -1,13 +1,13 @@
 From: LinkedIn Job Alerts <jobalerts-noreply@linkedin.com>
 To: someone@example.com
 Subject: "platform engineer": 3 new jobs
-Date: Wed, 15 Oct 2026 04:30:00 +0000
+Date: Wed, 11 Nov 2026 04:30:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="utf-8"
 
 <html><body>
-<a href="https://www.linkedin.com/jobs/view/4123456789/?trk=eml-jobs">Principal Infrastructure Engineer</a>
-<span>Northwind Data</span>   <span>India (Remote)</span>
-<a href="https://www.linkedin.com/jobs/view/4987654321/?trk=eml-jobs">Senior Site Reliability Engineer</a>
-<span>Castle Cloud</span>   <span>Pune, Maharashtra (Hybrid)</span>
+<a href="https://www.linkedin.com/comm/jobs/view/4123456789/?trk=eml"><img src="logo.png"></a>
+<a href="https://www.linkedin.com/comm/jobs/view/4123456789/?trk=eml">Principal Infrastructure Engineer Northwind Data &#183; India (Remote)</a>
+<a href="https://www.linkedin.com/comm/jobs/view/4123456789/?trk=eml">View job</a>
+<a href="https://www.linkedin.com/jobs/view/4987654321/">Senior Site Reliability Engineer Castle Cloud &#183; Pune, Maharashtra (Hybrid)</a>
 </body></html>
