@@ -15,8 +15,10 @@ detection, no account risk, and nothing to repair when a page template changes.
 Setting it up: create saved searches on Indeed and LinkedIn, have the alerts
 filtered into one mail folder, and point ``folder`` at it.
 
-Credentials come from the environment and never from config, because config is
-committed and this repo is public:
+Credentials never live in config, because config is committed and this repo is
+public. They are read from the process environment, or from a gitignored
+``./.env``, or from ``~/.config/scout/env`` — see :mod:`scout.secrets`. A value
+of ``keychain:<service>`` is resolved through the macOS keychain instead:
 
     SCOUT_IMAP_HOST      e.g. imap.gmail.com
     SCOUT_IMAP_USER      the mailbox address
@@ -28,7 +30,6 @@ from __future__ import annotations
 
 import email
 import imaplib
-import os
 import re
 from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
@@ -39,6 +40,7 @@ from urllib.parse import parse_qs, urlparse
 from ..config import Config
 from ..http import PoliteClient
 from ..models import Job
+from ..secrets import get as secret
 
 #: Where a job id lives in each provider's alert links.
 INDEED_LINK = re.compile(
@@ -204,12 +206,14 @@ def parse_message(raw: bytes, received: datetime | None = None) -> list[Job]:
 def fetch(client: PoliteClient, config: Config) -> list[Job]:  # noqa: ARG001 — IMAP, not HTTP
     """Read recent alert emails from the configured folder and normalise them."""
     settings = config.source("email")
-    host = os.environ.get("SCOUT_IMAP_HOST")
-    user = os.environ.get("SCOUT_IMAP_USER")
-    password = os.environ.get("SCOUT_IMAP_PASSWORD")
+    host = secret("SCOUT_IMAP_HOST")
+    user = secret("SCOUT_IMAP_USER")
+    password = secret("SCOUT_IMAP_PASSWORD")
     if not (host and user and password):
         raise EmailConfigError(
-            "set SCOUT_IMAP_HOST, SCOUT_IMAP_USER and SCOUT_IMAP_PASSWORD to read job-alert email"
+            "missing IMAP credentials. Set SCOUT_IMAP_HOST, SCOUT_IMAP_USER and "
+            "SCOUT_IMAP_PASSWORD in the environment, in ./.env, or in "
+            "~/.config/scout/env (see README)"
         )
 
     folder = settings.get("folder") or "INBOX"
@@ -217,7 +221,7 @@ def fetch(client: PoliteClient, config: Config) -> list[Job]:  # noqa: ARG001 �
     since = (datetime.now(timezone.utc) - timedelta(days=max_age_days)).strftime("%d-%b-%Y")
 
     jobs: list[Job] = []
-    conn = imaplib.IMAP4_SSL(host, int(os.environ.get("SCOUT_IMAP_PORT", 993)))
+    conn = imaplib.IMAP4_SSL(host, int(secret("SCOUT_IMAP_PORT", "993") or 993))
     try:
         conn.login(user, password)
         conn.select(f'"{folder}"', readonly=True)

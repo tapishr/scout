@@ -206,7 +206,7 @@ sources:
   # and name it here. Credentials come from the environment, never this file:
   #   SCOUT_IMAP_HOST / SCOUT_IMAP_USER / SCOUT_IMAP_PASSWORD (app password)
   email:
-    enabled: false
+    enabled: true
     folder: "Job Alerts"
     max_age_days: 7
 

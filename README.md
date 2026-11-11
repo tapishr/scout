@@ -40,10 +40,27 @@ parsed locally. No scraping, no bot detection, no account risk.
 Set up saved searches on each platform, filter their alerts into one mail folder,
 then:
 
+Credentials can go in any of three places, first hit wins:
+
+1. the process environment
+2. `./.env` — gitignored, `chmod 600`; copy `.env.example` to start
+3. `~/.config/scout/env` — outside the repo entirely, so it cannot be committed
+   even by accident
+
 ```bash
-export SCOUT_IMAP_HOST=imap.gmail.com
-export SCOUT_IMAP_USER=you@example.com
-export SCOUT_IMAP_PASSWORD=...    # an app-specific password, not your account password
+cp .env.example .env && chmod 600 .env
+# then edit .env:
+#   SCOUT_IMAP_HOST=imap.gmail.com
+#   SCOUT_IMAP_USER=you@example.com
+#   SCOUT_IMAP_PASSWORD=abcd efgh ijkl mnop   # Gmail app password, not your account password
+```
+
+On a shared or backed-up machine, keep it out of plaintext entirely — put it in
+the macOS keychain and reference it:
+
+```bash
+security add-generic-password -s scout-imap -a "$USER" -w
+# then in .env:  SCOUT_IMAP_PASSWORD=keychain:scout-imap
 ```
 
 and enable it in `config.yaml`:
@@ -55,7 +72,7 @@ and enable it in `config.yaml`:
     max_age_days: 7
 ```
 
-Credentials are read from the environment only, never from config — this repo is public.
+Credentials are never read from `config.yaml` — this repo is public.
 
 ## Remote, India — no office attached (7)
 _India remote with no Indian office on the requisition._
